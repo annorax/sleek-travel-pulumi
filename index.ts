@@ -1,5 +1,4 @@
 import * as pulumi from "@pulumi/pulumi";
-import * as aws from "@pulumi/aws";
 import * as awsx from "@pulumi/awsx";
 import * as dotenv from "dotenv";
 import { Subnet } from "@pulumi/aws/ec2";
