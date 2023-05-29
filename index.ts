@@ -16,7 +16,7 @@ export = async () => {
     const availabilityZones = allAvailabilityZones.names.slice(0, numberOfAvailabilityZones);
     const postgresql = new aws.rds.Cluster("postgresql", {
         availabilityZones: availabilityZones,
-        backupRetentionPeriod: 365,
+        backupRetentionPeriod: 35,
         clusterIdentifier: "slim-travel",
         databaseName: "slim-travel",
         engine: "aurora-postgresql",
