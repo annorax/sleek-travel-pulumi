@@ -14,14 +14,20 @@ export = async () => {
     });    
     const allAvailabilityZones = await aws.getAvailabilityZones(undefined, { parent: vpc });
     const availabilityZones = allAvailabilityZones.names.slice(0, numberOfAvailabilityZones);
+    const dbSubnetGroup = new aws.rds.SubnetGroup("dbsubnet", {
+        name: "slim-travel",
+        subnetIds: vpc.privateSubnetIds,
+    });
     const postgresql = new aws.rds.Cluster("postgresql", {
         availabilityZones: availabilityZones,
+        dbSubnetGroupName: dbSubnetGroup.name,
         backupRetentionPeriod: 35,
         clusterIdentifier: "slim-travel",
         databaseName: "slim-travel",
         engine: "aurora-postgresql",
         masterUsername: <string>process.env.POSTGRESQL_USERNAME,
         masterPassword: <string>process.env.POSTGRESQL_PASSWORD,
-        preferredBackupWindow: "07:00-09:00"
+        preferredBackupWindow: "07:00-09:00",
+        vpcSecurityGroupIds: 
     });
 }
