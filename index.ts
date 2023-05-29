@@ -23,7 +23,7 @@ export = async () => {
         dbSubnetGroupName: dbSubnetGroup.name,
         backupRetentionPeriod: 35,
         clusterIdentifier: "slim-travel",
-        databaseName: "slim-travel",
+        databaseName: "SlimTravel",
         engine: "aurora-postgresql",
         masterUsername: <string>process.env.POSTGRESQL_USERNAME,
         masterPassword: <string>process.env.POSTGRESQL_PASSWORD,
