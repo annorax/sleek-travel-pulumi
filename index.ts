@@ -14,19 +14,6 @@ export = async () => {
         name: "slim-travel",
         subnetIds: vpc.privateSubnetIds,
     });
-    new aws.ec2clientvpn.Endpoint("slim-travel-clientvpn", {
-        vpcId: vpc.vpcId,
-        serverCertificateArn: "arn:aws:acm:eu-west-2:486087129309:certificate/feb470b7-caa5-45a8-935f-146e7ef4eecd",
-        clientCidrBlock: "10.1.0.0/16",
-        authenticationOptions: [{
-            type: "certificate-authentication",
-            rootCertificateChainArn: "arn:aws:acm:eu-west-2:486087129309:certificate/fa995600-1a33-4fa4-b9da-c3124f440431",
-        }],
-        connectionLogOptions: {
-            enabled: false
-        },
-        splitTunnel: true
-    });
     new aws.rds.Cluster("slim-travel", {
         availabilityZones: availabilityZoneNames,
         dbSubnetGroupName: dbSubnetGroup.name,
@@ -39,5 +26,26 @@ export = async () => {
         preferredBackupWindow: "07:00-09:00"
     }, {
         ignoreChanges: ["availabilityZones"]
+    });
+    const clientVpnEndpoint = new aws.ec2clientvpn.Endpoint("slim-travel-clientvpn", {
+        vpcId: vpc.vpcId,
+        serverCertificateArn: "arn:aws:acm:eu-west-2:486087129309:certificate/feb470b7-caa5-45a8-935f-146e7ef4eecd",
+        clientCidrBlock: "10.1.0.0/16",
+        authenticationOptions: [{
+            type: "certificate-authentication",
+            rootCertificateChainArn: "arn:aws:acm:eu-west-2:486087129309:certificate/fa995600-1a33-4fa4-b9da-c3124f440431",
+        }],
+        connectionLogOptions: {
+            enabled: false
+        },
+        splitTunnel: true
+    });
+    vpc.privateSubnetIds.apply(privateSubnetIds => {
+        for (let i = 0; i < privateSubnetIds.length; i++) {
+            new aws.ec2clientvpn.NetworkAssociation(`slim-travel-${i+1}`, {
+                clientVpnEndpointId: clientVpnEndpoint.id,
+                subnetId: privateSubnetIds[i],
+            });
+        }
     });
 }
