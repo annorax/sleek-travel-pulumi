@@ -27,7 +27,6 @@ export = async () => {
         engine: "aurora-postgresql",
         masterUsername: <string>process.env.POSTGRESQL_USERNAME,
         masterPassword: <string>process.env.POSTGRESQL_PASSWORD,
-        preferredBackupWindow: "07:00-09:00",
-        vpcSecurityGroupIds: 
+        preferredBackupWindow: "07:00-09:00"
     });
 }
