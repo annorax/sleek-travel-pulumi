@@ -6,6 +6,8 @@ import { Subnet } from "@pulumi/aws/ec2";
 
 dotenv.config();
 
+const dbEngine = "aurora-postgresql";
+
 const availabilityZoneNames = ['eu-west-2a', 'eu-west-2b'];
 
 export = async () => {
@@ -16,19 +18,28 @@ export = async () => {
         name: "slim-travel",
         subnetIds: vpc.privateSubnetIds,
     });
-    new aws.rds.Cluster("slim-travel", {
+    const cluster = new aws.rds.Cluster("slim-travel", {
         availabilityZones: availabilityZoneNames,
         dbSubnetGroupName: dbSubnetGroup.name,
         backupRetentionPeriod: 35,
         clusterIdentifier: "slim-travel",
         databaseName: "SlimTravel",
-        engine: "aurora-postgresql",
+        engine: dbEngine,
         masterUsername: <string>process.env.POSTGRESQL_USERNAME,
         masterPassword: <string>process.env.POSTGRESQL_PASSWORD,
-        preferredBackupWindow: "07:00-09:00"
+        preferredBackupWindow: "07:00-09:00",
+        skipFinalSnapshot: true
     }, {
         ignoreChanges: ["availabilityZones"]
     });
+    for (let i = 0; i < availabilityZoneNames.length; i++) {
+        new aws.rds.ClusterInstance(`slim-travel-${i + 1}`, {
+            clusterIdentifier: cluster.id,
+            engine: dbEngine,
+            instanceClass: aws.rds.InstanceType.T3_Medium,
+            availabilityZone: availabilityZoneNames[i]
+        });
+    }
     const clientVpnEndpoint = new aws.ec2clientvpn.Endpoint("slim-travel-clientvpn", {
         vpcId: vpc.vpcId,
         serverCertificateArn: "arn:aws:acm:eu-west-2:486087129309:certificate/feb470b7-caa5-45a8-935f-146e7ef4eecd",
@@ -38,6 +49,9 @@ export = async () => {
             rootCertificateChainArn: "arn:aws:acm:eu-west-2:486087129309:certificate/fa995600-1a33-4fa4-b9da-c3124f440431",
         }],
         connectionLogOptions: {
+            enabled: false
+        },
+        clientConnectOptions: {
             enabled: false
         },
         splitTunnel: true
@@ -58,13 +72,19 @@ export = async () => {
             }
             const privateSubnets = privateSubnetIds.map(privateSubnetId => subnetsById[privateSubnetId]);
             pulumi.all(privateSubnets.map(privateSubnet => privateSubnet.cidrBlock)).apply(privateSubnetCidrBlocks => {
-                for (let i = 0; i < privateSubnetCidrBlocks.length; i++) {
+                let i = 0;
+                for (; i < privateSubnetCidrBlocks.length; i++) {
                     new aws.ec2clientvpn.AuthorizationRule(`slim-travel-${i + 1}`, {
                         clientVpnEndpointId: clientVpnEndpoint.id,
                         targetNetworkCidr: <string>privateSubnetCidrBlocks[i],
                         authorizeAllGroups: true,
                     });
                 }
+                new aws.ec2clientvpn.AuthorizationRule(`slim-travel-${i + 1}`, {
+                    clientVpnEndpointId: clientVpnEndpoint.id,
+                    targetNetworkCidr: '10.1.0.0/16',
+                    authorizeAllGroups: true
+                });
             });
         });
     });
