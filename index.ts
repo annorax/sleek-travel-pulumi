@@ -10,6 +10,9 @@ const dbEngine = "aurora-postgresql";
 
 const availabilityZoneNames = ['eu-west-2a', 'eu-west-2b'];
 
+const vpnEndpointLogGroupName = "vpn/endpoint";
+const vpnEndpointLogStreamName = "slim-travel";
+
 export = async () => {
     const vpc = new awsx.ec2.Vpc("slim-travel", {
         availabilityZoneNames: availabilityZoneNames,
@@ -43,6 +46,13 @@ export = async () => {
             publiclyAccessible: true
         });
     }
+    const logGroup = new aws.cloudwatch.LogGroup(vpnEndpointLogGroupName, {
+        name: vpnEndpointLogGroupName
+    });
+    const logStream = new aws.cloudwatch.LogStream(vpnEndpointLogStreamName, {
+        name: vpnEndpointLogStreamName,
+        logGroupName: logGroup.name
+    });
     const clientVpnEndpoint = new aws.ec2clientvpn.Endpoint("slim-travel-clientvpn", {
         vpcId: vpc.vpcId,
         serverCertificateArn: "arn:aws:acm:eu-west-2:486087129309:certificate/feb470b7-caa5-45a8-935f-146e7ef4eecd",
@@ -52,7 +62,9 @@ export = async () => {
             rootCertificateChainArn: "arn:aws:acm:eu-west-2:486087129309:certificate/fa995600-1a33-4fa4-b9da-c3124f440431",
         }],
         connectionLogOptions: {
-            enabled: false
+            enabled: true,
+            cloudwatchLogGroup: logGroup.name,
+            cloudwatchLogStream: logStream.name
         },
         clientConnectOptions: {
             enabled: false
