@@ -6,6 +6,7 @@ import { Subnet } from "@pulumi/aws/ec2";
 
 dotenv.config();
 
+const vpcCidrBlock = "10.0.0.0/16";
 const dbEngine = "aurora-postgresql";
 
 const availabilityZoneNames = ['eu-west-2a', 'eu-west-2b'];
@@ -16,6 +17,7 @@ const vpnEndpointLogStreamName = "slim-travel";
 export = async () => {
     const vpc = new awsx.ec2.Vpc("slim-travel", {
         availabilityZoneNames: availabilityZoneNames,
+        cidrBlock: vpcCidrBlock,
         enableDnsSupport: true,
         enableDnsHostnames: true
     });
@@ -30,6 +32,7 @@ export = async () => {
         clusterIdentifier: "slim-travel",
         databaseName: "SlimTravel",
         engine: dbEngine,
+        engineVersion: "15.2",
         masterUsername: <string>process.env.POSTGRESQL_USERNAME,
         masterPassword: <string>process.env.POSTGRESQL_PASSWORD,
         preferredBackupWindow: "07:00-09:00",
@@ -79,6 +82,11 @@ export = async () => {
             });
         }
     });
+    new aws.ec2clientvpn.AuthorizationRule("slim-travel", {
+        clientVpnEndpointId: clientVpnEndpoint.id,
+        targetNetworkCidr: vpcCidrBlock,
+        authorizeAllGroups: true
+    });
     pulumi.all([vpc.subnets, vpc.privateSubnetIds]).apply(([subnets, privateSubnetIds]) => {
         const subnetsById:{ [key: string]: Subnet } = {};
         pulumi.all(subnets.map(subnet => subnet.id)).apply(subnetIds => {
@@ -87,13 +95,7 @@ export = async () => {
             }
             const privateSubnets = privateSubnetIds.map(privateSubnetId => subnetsById[privateSubnetId]);
             pulumi.all(privateSubnets.map(privateSubnet => privateSubnet.cidrBlock)).apply(privateSubnetCidrBlocks => {
-                let i = 0;
-                for (; i < privateSubnetCidrBlocks.length; i++) {
-                    new aws.ec2clientvpn.AuthorizationRule(`slim-travel-${i + 1}`, {
-                        clientVpnEndpointId: clientVpnEndpoint.id,
-                        targetNetworkCidr: <string>privateSubnetCidrBlocks[i],
-                        authorizeAllGroups: true
-                    });
+                for (let i = 0; i < privateSubnetCidrBlocks.length; i++) {
                     new aws.ec2clientvpn.Route(`slim-travel-${i + 1}`, {
                         clientVpnEndpointId: clientVpnEndpoint.id,
                         destinationCidrBlock: "0.0.0.0/0",
