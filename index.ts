@@ -80,7 +80,7 @@ export = async () => {
                     new aws.ec2clientvpn.AuthorizationRule(`slim-travel-${i + 1}`, {
                         clientVpnEndpointId: clientVpnEndpoint.id,
                         targetNetworkCidr: <string>privateSubnetCidrBlocks[i],
-                        authorizeAllGroups: true,
+                        authorizeAllGroups: true
                     });
                     new aws.ec2clientvpn.Route(`slim-travel-${i + 1}`, {
                         clientVpnEndpointId: clientVpnEndpoint.id,
@@ -88,11 +88,6 @@ export = async () => {
                         targetVpcSubnetId: privateSubnets[i].id,
                     });
                 }
-                new aws.ec2clientvpn.AuthorizationRule(`slim-travel-${i + 1}`, {
-                    clientVpnEndpointId: clientVpnEndpoint.id,
-                    targetNetworkCidr: '10.1.0.0/16',
-                    authorizeAllGroups: true
-                });
             });
         });
     });
