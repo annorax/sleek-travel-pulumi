@@ -12,7 +12,9 @@ const availabilityZoneNames = ['eu-west-2a', 'eu-west-2b'];
 
 export = async () => {
     const vpc = new awsx.ec2.Vpc("slim-travel", {
-        availabilityZoneNames: availabilityZoneNames
+        availabilityZoneNames: availabilityZoneNames,
+        enableDnsSupport: true,
+        enableDnsHostnames: true
     });
     const dbSubnetGroup = new aws.rds.SubnetGroup("dbsubnet", {
         name: "slim-travel",
@@ -37,7 +39,8 @@ export = async () => {
             clusterIdentifier: cluster.id,
             engine: dbEngine,
             instanceClass: aws.rds.InstanceType.T3_Medium,
-            availabilityZone: availabilityZoneNames[i]
+            availabilityZone: availabilityZoneNames[i],
+            publiclyAccessible: true
         });
     }
     const clientVpnEndpoint = new aws.ec2clientvpn.Endpoint("slim-travel-clientvpn", {
@@ -78,6 +81,11 @@ export = async () => {
                         clientVpnEndpointId: clientVpnEndpoint.id,
                         targetNetworkCidr: <string>privateSubnetCidrBlocks[i],
                         authorizeAllGroups: true,
+                    });
+                    new aws.ec2clientvpn.Route(`slim-travel-${i + 1}`, {
+                        clientVpnEndpointId: clientVpnEndpoint.id,
+                        destinationCidrBlock: "0.0.0.0/0",
+                        targetVpcSubnetId: privateSubnets[i].id,
                     });
                 }
                 new aws.ec2clientvpn.AuthorizationRule(`slim-travel-${i + 1}`, {
