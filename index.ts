@@ -45,8 +45,7 @@ export = async () => {
             clusterIdentifier: cluster.id,
             engine: dbEngine,
             instanceClass: aws.rds.InstanceType.T3_Medium,
-            availabilityZone: availabilityZoneNames[i],
-            publiclyAccessible: true
+            availabilityZone: availabilityZoneNames[i]
         });
     }
     const logGroup = new aws.cloudwatch.LogGroup(vpnEndpointLogGroupName, {
