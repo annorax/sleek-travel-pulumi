@@ -38,7 +38,11 @@ export = async () => {
         engineVersion: "15.2",
         masterUsername: <string>process.env.POSTGRESQL_USERNAME,
         masterUserPassword: <string>process.env.POSTGRESQL_PASSWORD,
-        preferredBackupWindow: "07:00-09:00"
+        preferredBackupWindow: "07:00-09:00",
+        serverlessV2ScalingConfiguration: {
+            minCapacity: 0.5,
+            maxCapacity: 10
+        }
     }, {
         ignoreChanges: ["availabilityZones"],
         dependsOn: [ subnetGroup ]
@@ -47,7 +51,7 @@ export = async () => {
         new aws.rds.DBInstance(`${baseName}-${i + 1}`, {
             dBClusterIdentifier: cluster.id,
             engine: dbEngine,
-            dBInstanceClass: "db.t3.medium",
+            dBInstanceClass: "db.serverless",
             availabilityZone: availabilityZoneNames[i]
         });
     }
