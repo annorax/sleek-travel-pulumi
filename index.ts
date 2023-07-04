@@ -8,7 +8,6 @@ dotenv.config();
 
 const vpcCidrBlock = "10.0.0.0/16";
 const dbEngine = "aurora-postgresql";
-const dbEngineVersion = "13.9";
 const baseName = "slim-travel";
 
 const availabilityZoneNames = ['eu-west-2a', 'eu-west-2b'];
@@ -36,8 +35,7 @@ export = async () => {
         dBClusterIdentifier: baseName,
         databaseName: "SlimTravel",
         engine: dbEngine,
-        engineMode: "serverless",
-        engineVersion: dbEngineVersion,
+        engineVersion: "15.2",
         masterUsername: <string>process.env.POSTGRESQL_USERNAME,
         masterUserPassword: <string>process.env.POSTGRESQL_PASSWORD,
         preferredBackupWindow: "07:00-09:00"
@@ -45,6 +43,14 @@ export = async () => {
         ignoreChanges: ["availabilityZones"],
         dependsOn: [ subnetGroup ]
     });
+    for (let i = 0; i < availabilityZoneNames.length; i++) {
+        new aws.rds.DBInstance(`${baseName}-${i + 1}`, {
+            dBClusterIdentifier: cluster.id,
+            engine: dbEngine,
+            dBInstanceClass: "db.t3.medium",
+            availabilityZone: availabilityZoneNames[i]
+        });
+    }
     const logGroup = new awsClassic.cloudwatch.LogGroup(vpnEndpointLogGroupName, {
         name: vpnEndpointLogGroupName
     });
