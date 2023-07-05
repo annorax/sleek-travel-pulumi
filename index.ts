@@ -62,7 +62,7 @@ export = async () => {
         name: vpnEndpointLogStreamName,
         logGroupName: logGroup.name
     });
-    const clientVpnEndpoint = new awsClassic.ec2clientvpn.Endpoint(`${baseName}-clientvpn`, {
+    /*const clientVpnEndpoint = new awsClassic.ec2clientvpn.Endpoint(`${baseName}-clientvpn`, {
         vpcId: vpc.vpcId,
         serverCertificateArn: "arn:aws:acm:eu-west-2:486087129309:certificate/feb470b7-caa5-45a8-935f-146e7ef4eecd",
         clientCidrBlock: "10.1.0.0/16",
@@ -110,5 +110,5 @@ export = async () => {
                 }
             });
         });
-    });
+    });*/
 }
