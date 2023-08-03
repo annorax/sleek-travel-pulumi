@@ -20,7 +20,10 @@ export = async () => {
         availabilityZoneNames: availabilityZoneNames,
         cidrBlock: vpcCidrBlock,
         enableDnsSupport: true,
-        enableDnsHostnames: true
+        enableDnsHostnames: true,
+        natGateways: {
+            strategy: "None"
+        }
     });
     const subnetGroup = new aws.rds.DBSubnetGroup(baseName, {
         dBSubnetGroupName: baseName,
