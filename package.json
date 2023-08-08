@@ -2,7 +2,7 @@
     "name": "slim-travel-pulumi",
     "main": "index.ts",
     "devDependencies": {
-        "@types/node": "^20.4.6",
+        "@types/node": "^20.4.8",
         "dotenv": "^16.3.1"
     },
     "dependencies": {
