@@ -25,17 +25,17 @@ export = async () => {
             strategy: "None"
         }
     });
-    const subnetGroup = new aws.rds.DBSubnetGroup(baseName, {
-        dBSubnetGroupName: baseName,
-        dBSubnetGroupDescription: baseName,
+    const subnetGroup = new aws.rds.DbSubnetGroup(baseName, {
+        dbSubnetGroupName: baseName,
+        dbSubnetGroupDescription: baseName,
         subnetIds: vpc.privateSubnetIds,
     });
-    const cluster = new aws.rds.DBCluster(baseName, {
+    const cluster = new aws.rds.DbCluster(baseName, {
         availabilityZones: availabilityZoneNames,
-        dBSubnetGroupName: baseName,
+        dbSubnetGroupName: baseName,
         port: 5432,
         backupRetentionPeriod: 35,
-        dBClusterIdentifier: baseName,
+        dbClusterIdentifier: baseName,
         databaseName: "SlimTravel",
         engine: dbEngine,
         engineVersion: "15.2",
@@ -51,10 +51,10 @@ export = async () => {
         dependsOn: [ subnetGroup ]
     });
     for (let i = 0; i < availabilityZoneNames.length; i++) {
-        new aws.rds.DBInstance(`${baseName}-${i + 1}`, {
-            dBClusterIdentifier: cluster.id,
+        new aws.rds.DbInstance(`${baseName}-${i + 1}`, {
+            dbClusterIdentifier: cluster.id,
             engine: dbEngine,
-            dBInstanceClass: "db.serverless",
+            dbInstanceClass: "db.serverless",
             availabilityZone: availabilityZoneNames[i]
         });
     }
