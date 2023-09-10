@@ -2,7 +2,7 @@
     "name": "slim-travel-pulumi",
     "main": "index.ts",
     "dependencies": {
-        "@pulumi/pulumi": "^3.80.0",
+        "@pulumi/pulumi": "^3.81.0",
         "@pulumi/aws": "^6.0.4",
         "@pulumi/aws-native": "^0.75.0",
         "@pulumi/awsx": "^1.0.5"
