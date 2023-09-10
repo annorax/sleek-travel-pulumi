@@ -1,14 +1,14 @@
 {
     "name": "slim-travel-pulumi",
     "main": "index.ts",
-    "devDependencies": {
-        "@types/node": "^20.5.9",
-        "dotenv": "^16.3.1"
-    },
     "dependencies": {
         "@pulumi/pulumi": "^3.80.0",
         "@pulumi/aws": "^6.0.4",
         "@pulumi/aws-native": "^0.75.0",
         "@pulumi/awsx": "^1.0.5"
+    },
+        "devDependencies": {
+        "@types/node": "^20.6.0",
+        "dotenv": "^16.3.1"
     }
 }
