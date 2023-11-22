@@ -3,12 +3,12 @@
     "main": "index.ts",
     "dependencies": {
         "@pulumi/pulumi": "^3.94.2",
-        "@pulumi/aws": "^6.9.0",
-        "@pulumi/aws-native": "^0.85.0",
+        "@pulumi/aws": "^6.10.0",
+        "@pulumi/aws-native": "^0.86.0",
         "@pulumi/awsx": "^2.1.1"
     },
     "devDependencies": {
-        "@types/node": "^20.9.3",
+        "@types/node": "^20.9.4",
         "dotenv": "^16.3.1"
     }
 }
