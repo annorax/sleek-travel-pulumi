@@ -38,7 +38,7 @@ export = async () => {
         dbClusterIdentifier: baseName,
         databaseName: "SlimTravel",
         engine: dbEngine,
-        engineVersion: "15.2",
+        engineVersion: "16.2",
         masterUsername: <string>process.env.POSTGRESQL_USERNAME,
         masterUserPassword: <string>process.env.POSTGRESQL_PASSWORD,
         preferredBackupWindow: "07:00-09:00",
