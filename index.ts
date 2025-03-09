@@ -10,7 +10,7 @@ const vpcCidrBlock = "10.0.0.0/16";
 const dbEngine = "aurora-postgresql";
 const baseName = "slim-travel";
 
-const availabilityZoneNames = ['eu-west-2a', 'eu-west-2b'];
+const availabilityZoneNames = ['eu-central-1a', 'eu-central-1b'];
 
 const vpnEndpointLogGroupName = "vpn/endpoint";
 const vpnEndpointLogStreamName = baseName;
@@ -38,7 +38,7 @@ export = async () => {
         dbClusterIdentifier: baseName,
         databaseName: "SlimTravel",
         engine: dbEngine,
-        engineVersion: "16.2",
+        engineVersion: "17.0",
         masterUsername: <string>process.env.POSTGRESQL_USERNAME,
         masterUserPassword: <string>process.env.POSTGRESQL_PASSWORD,
         preferredBackupWindow: "07:00-09:00",
