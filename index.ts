@@ -8,7 +8,7 @@ dotenv.config();
 
 const vpcCidrBlock = "10.0.0.0/16";
 const dbEngine = "aurora-postgresql";
-const baseName = "slim-travel";
+const baseName = "slick-travel";
 
 const availabilityZoneNames = ['eu-central-1a', 'eu-central-1b'];
 
@@ -36,7 +36,7 @@ export = async () => {
         port: 5432,
         backupRetentionPeriod: 35,
         dbClusterIdentifier: baseName,
-        databaseName: "SlimTravel",
+        databaseName: "SlickTravel",
         engine: dbEngine,
         engineVersion: "17.0",
         masterUsername: <string>process.env.POSTGRESQL_USERNAME,

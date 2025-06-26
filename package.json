@@ -1,5 +1,5 @@
 {
-    "name": "slim-travel-pulumi",
+    "name": "slick-travel-pulumi",
     "main": "index.ts",
     "dependencies": {
         "@pulumi/pulumi": "^3.99.0",
