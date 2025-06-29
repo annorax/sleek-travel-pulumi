@@ -67,11 +67,11 @@ export = async () => {
     });
     const clientVpnEndpoint = new awsClassic.ec2clientvpn.Endpoint(`${baseName}-clientvpn`, {
         vpcId: vpc.vpcId,
-        serverCertificateArn: "arn:aws:acm:eu-west-2:486087129309:certificate/feb470b7-caa5-45a8-935f-146e7ef4eecd",
+        serverCertificateArn: "arn:aws:acm:eu-westcentral-1:486087129309:certificate/feb470b7-caa5-45a8-935f-146e7ef4eecd",
         clientCidrBlock: "10.1.0.0/16",
         authenticationOptions: [{
             type: "certificate-authentication",
-            rootCertificateChainArn: "arn:aws:acm:eu-west-2:486087129309:certificate/fa995600-1a33-4fa4-b9da-c3124f440431",
+            rootCertificateChainArn: "arn:aws:acm:eu-central-1:486087129309:certificate/fa995600-1a33-4fa4-b9da-c3124f440431",
         }],
         connectionLogOptions: {
             enabled: true,
